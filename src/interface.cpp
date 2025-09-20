@@ -3,26 +3,27 @@
 #include <util.hpp>
 #include <algorithm>
 
-void game_interface::init(char* argv[])
+void game_interface::init(char *argv[])
 {
   running = true;
   start(argv);
 }
-void game_interface::primary_prompt(){
-    ask(hostname);
-    ask("@");
-    ask(root->name);
-    ask(":");
-    ask(current->path);
-    ask(">> ");
+void game_interface::primary_prompt()
+{
+  ask(hostname);
+  ask("@");
+  ask(root->name);
+  ask(":~");
+  ask(current->path);
+  ask(">> ");
 }
 
-
-void game_interface::start(char* argv[])
-{ 
+void game_interface::start(char *argv[])
+{
   current = root;
   clear_screen();
-  while(running){
+  while (running)
+  {
     primary_prompt();
 
     get_answer(input);
@@ -32,38 +33,66 @@ void game_interface::start(char* argv[])
     std::string input_token;
     iss >> input_token;
 
-    if(input_token == "exit") { clear_screen(); break; }
-    if(input_token == "mkdir") {
-      std::string folder_name;
-      iss >> folder_name;
-      if(folder_name.empty()){
-        std::cerr << "spaces"<<endline;
-      } else if(!folder_name.empty()) {
-        make_folder(current,folder_name);
-      } else {
-        std::cerr <<"error mking folder"<<endline;
+    switch (to_Command(input_token))
+    {
+    case Command::Exit:
+      running = false;
+      clear_screen();
+      break;
+
+    case Command::Mkdir:
+      iss >> argument_0;
+      if (!argument_0.empty())
+        make_folder(current, argument_0);
+      else
+        std::cerr << "mkdir: missing operand" << endline;
+      break;
+
+    case Command::Cd:
+      iss >> argument_0;
+
+      if (!argument_0.empty())
+      {
+        if (argument_0 == "/")
+          current = root;
+        else
+          current = open_folder(current, argument_0);
       }
-      for(auto& folder : current->sub_n_folders)
-      std::cout << folder->name << space;
-      std::cout << endline;
-    }
-    if(input_token == "cd") {
-      std::string folder_name;
-      iss >> folder_name;
-      if(!folder_name.empty()){
-        current = open_folder(current, folder_name);
-      }else {
+      else
         current = root;
-      }
-    } 
-    if(input_token == "ls") {
+      break;
+
+    case Command::Ls:
       display_folders_contents(current);
-    }
-    if(input_token == "restart") {
+      break;
+
+    case Command::Restart:
       restart(argv);
+      break;
+
+    case Command::Hello:
+      hello();
+      break;
+    case Command::Host:
+      std::cout << "Hostname: " << hostname << endline;
+      break;
+
+    case Command::Clear:
+      clear_screen();
+      break;
+    case Command::Unknown:
+    default:
+      std::cout << "Unknown command: " << input_token << endline;
+      break;
     }
-    if(input_token == "hello") std::cout <<"Hello!" <<endline;
-    if(input_token == "host") std::cout<< "Hostname: "<< hostname << endline;
-    if(input_token == "clear") clear_screen();
   }
+}
+
+Command to_Command(std::string &str)
+{
+  std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
+                 { return static_cast<char>(std::tolower(c)); });
+
+  auto it = cmd_map.find(str);
+  return it != cmd_map.end() ? it->second : Command::Unknown;
 }
