@@ -1,0 +1,20 @@
+Game system Terminal
+
+filesystem
+
+file struct
+-- name
+-- contents objects
+
+Dir struct
+-- name
+-- vector of dirs
+-- vector of files
+-- path
+
+Dir fns
+-- make_folder(current, name)
+-- delete_foler(current, name)
+-- open_foler(current, name)
+-- display_folders(current)
+
