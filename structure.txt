@@ -33,4 +33,4 @@ functions
 - open_folder ( current, folder_name )
 - remove_folder( current, folder_name )
 - display_tree ( current, depth )
-- update_folder_name( current, folder_name, update_name )
+- rename_folder_name( current, folder_name, rename_name )

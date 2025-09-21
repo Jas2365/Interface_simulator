@@ -3,6 +3,15 @@
 #include <util.hpp>
 #include <algorithm>
 
+Command to_Command(std::string &str)
+{
+  std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
+                 { return static_cast<char>(std::tolower(c)); });
+
+  auto it = cmd_map.find(str);
+  return it != cmd_map.end() ? it->second : Command::Unknown;
+}
+
 void game_interface::init(char *argv[])
 {
   running = true;
@@ -49,6 +58,15 @@ void game_interface::start(char *argv[])
 
       argument_0 = "";
       break;
+    case Command::Touch:
+      iss >> argument_0;
+      if (!argument_0.empty())
+        make_file(current, argument_0);
+      else
+        std::cerr << "mkdir: missing operand" << endline;
+
+      argument_0 = "";
+      break;
 
     case Command::Cd:
       iss >> argument_0;
@@ -74,15 +92,15 @@ void game_interface::start(char *argv[])
 
       argument_0 = "";
       break;
-    case Command::Update:
+    case Command::Rename:
       iss >> argument_0;
       iss >> argument_1;
 
-      if (!argument_0.empty())
+      if (is_folder_exists(current, argument_0))
       {
         if (!argument_1.empty())
         {
-          update_folder_name(current, argument_0, argument_1);
+          rename_folder_name(current, argument_0, argument_1);
         }
         else
         {
@@ -91,6 +109,8 @@ void game_interface::start(char *argv[])
       }
       else
       {
+        if (argument_0 == "")
+          argument_0 = "null";
         std::cerr << "folder doesnt exist: " << argument_0 << endline;
       }
 
@@ -127,13 +147,4 @@ void game_interface::start(char *argv[])
       break;
     }
   }
-}
-
-Command to_Command(std::string &str)
-{
-  std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
-                 { return static_cast<char>(std::tolower(c)); });
-
-  auto it = cmd_map.find(str);
-  return it != cmd_map.end() ? it->second : Command::Unknown;
 }

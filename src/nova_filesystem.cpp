@@ -1,39 +1,44 @@
 #include <nova_filesystem.hpp>
 
-void make_folder(n_folder *root, std::string folder_name)
+void make_folder(n_folder *current, std::string folder_name)
 {
-  if (folder_name.empty())
-    std::cerr << "spaces" << endline;
-
-  for (auto &folder : root->sub_n_folders)
+  if (is_folder_exists(current, folder_name))
   {
-    if (folder->name == folder_name)
-    {
-      std::cerr << "mkdir: cannot create directory \'" << folder_name
-                << "\': Folder exists"
-                << endline;
-      return;
-    }
+    std::cerr << "mkdir: cannot create directory \'" << folder_name
+              << "\': Folder exists"
+              << endline;
+    return;
   }
 
   std::unique_ptr<n_folder> n_temp(new n_folder);
   n_temp->name = folder_name;
-  n_temp->parent = root;
-  n_temp->path = root->path + "/" + folder_name;
+  n_temp->parent = current;
+  n_temp->path = current->path + "/" + folder_name;
 
-  root->sub_n_folders.push_back(std::move(n_temp));
+  current->sub_n_folders.push_back(std::move(n_temp));
 }
 
-void display_folders_contents(const n_folder *root)
+void display_folders_contents(const n_folder *current)
 {
-  if (root->sub_n_folders.size() == 0)
-    return;
-
-  for (const auto &folder : root->sub_n_folders)
+  if (current->sub_n_folders.size() != 0)
   {
-    std::cout << folder->name << space;
+
+    std::cout << "Folders: " << endline;
+    for (const auto &folder : current->sub_n_folders)
+    {
+      std::cout << folder->name << space;
+    }
+    std::cout << endline;
   }
-  std::cout << endline;
+  if (current->sub_n_files.size() != 0)
+  {
+    std::cout << "Files: " << endline;
+    for (const auto &file : current->sub_n_files)
+    {
+      std::cout << file->name << "." << file->extension << space;
+    }
+    std::cout << endline;
+  }
 }
 
 n_folder *open_folder(n_folder *current, std::string folder_name)
@@ -81,7 +86,7 @@ void remove_folder(n_folder *current, std::string folder_name)
       current->sub_n_folders.end());
 }
 
-void update_folder_name(n_folder *current, std::string folder_name, std::string update_folder_name)
+void rename_folder_name(n_folder *current, std::string folder_name, std::string rename_folder_name)
 {
   auto it = std::find_if(current->sub_n_folders.begin(), current->sub_n_folders.end(), [folder_name](std::unique_ptr<n_folder> &f)
                          { return f && f->name == folder_name; });
@@ -90,16 +95,84 @@ void update_folder_name(n_folder *current, std::string folder_name, std::string 
 
   for (const auto &folder : current->sub_n_folders)
   {
-    if (folder->name == update_folder_name)
+    if (folder->name == rename_folder_name)
     {
-      std::cerr << "update: name alredy exist" << endline;
+      std::cerr << "rename: name alredy exist" << endline;
       return;
     }
   }
 
-  (*it)->name = update_folder_name;
-  // todo
-  // update path
-  // update sub dirs path
-  std::cout << "Updated to: " << (*it)->name << endline;
+  (*it)->name = rename_folder_name;
+  update_path_recursively((*it).get());
+  std::cout << "Renamed to: " << (*it)->name << endline;
+}
+
+void update_path_recursively(n_folder *current)
+{
+  if (current->parent)
+  {
+    current->path = current->parent->path + "/" + current->name;
+  }
+  else
+  {
+    current->path = current->name; // root;
+  }
+
+  for (auto &sub : current->sub_n_folders)
+  {
+    update_path_recursively(sub.get());
+  }
+}
+// true => exists
+bool is_folder_exists(n_folder *current, std::string &name)
+{
+  if (!current)
+  {
+    std::cerr << "Error: current folder doesnt exist" << endline;
+  }
+  for (auto &folder : current->sub_n_folders)
+  {
+    if (folder->name == name)
+      return true;
+  }
+  return false;
+}
+// true => exists
+bool is_file_exists(n_folder *current, std::string &name)
+{
+  if (!current)
+  {
+    std::cerr << "Error: current folder doesnt exist" << endline;
+  }
+
+  for (auto &file : current->sub_n_files)
+  {
+    if (file->name == name)
+      return true;
+  }
+  return false;
+}
+
+void make_file(n_folder *current, std::string file_name)
+{
+  if (is_file_exists(current, file_name))
+  {
+    std::cerr << "File: alredy exist with name \'" << file_name << "\'" << endline;
+    return;
+  }
+
+  std::unique_ptr<n_file> n_temp(new n_file);
+  auto pos = file_name.find('.');
+  if (pos != std::string::npos)
+  {
+    n_temp->name = file_name.substr(0, pos);
+    n_temp->extension = file_name.substr(pos + 1);
+    n_temp->path = current->path + "/" + file_name;
+
+    current->sub_n_files.push_back(std::move(n_temp));
+  }
+  else
+  {
+    std::cerr << "file Extension is not given: " << file_name << endline;
+  }
 }

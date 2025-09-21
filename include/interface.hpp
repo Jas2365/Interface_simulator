@@ -3,6 +3,43 @@
 #include "nova_filesystem.hpp"
 #include <unordered_map>
 
+enum class Command
+{
+  Unknown,
+  Help,
+  Exit,
+  Mkdir,
+  Cd,
+  Ls,
+  Restart,
+  Hello,
+  Host,
+  Clear,
+  Tree,
+  Remove,
+  Rename,
+  Touch,
+};
+
+static const std::unordered_map<std::string, Command> cmd_map{
+    {"unknown", Command::Unknown},
+    {"help", Command::Help},
+    {"exit", Command::Exit},
+    {"mkdir", Command::Mkdir},
+    {"cd", Command::Cd},
+    {"ls", Command::Ls},
+    {"restart", Command::Restart},
+    {"hello", Command::Hello},
+    {"host", Command::Host},
+    {"clear", Command::Clear},
+    {"tree", Command::Tree},
+    {"remove", Command::Remove},
+    {"rename", Command::Rename},
+    {"touch", Command::Touch},
+};
+
+Command to_Command(std::string &str);
+
 using INPUT = std::string;
 using HOSTNAME = std::string;
 
@@ -32,36 +69,3 @@ struct game_interface
   void primary_prompt();
   inline void clear_screen() { system("clear"); }
 };
-
-enum class Command
-{
-  Unknown,
-  Exit,
-  Mkdir,
-  Cd,
-  Ls,
-  Restart,
-  Hello,
-  Host,
-  Clear,
-  Tree,
-  Remove,
-  Update,
-};
-
-static const std::unordered_map<std::string, Command> cmd_map{
-    {"unknown", Command::Unknown},
-    {"exit", Command::Exit},
-    {"mkdir", Command::Mkdir},
-    {"cd", Command::Cd},
-    {"ls", Command::Ls},
-    {"restart", Command::Restart},
-    {"hello", Command::Hello},
-    {"host", Command::Host},
-    {"clear", Command::Clear},
-    {"tree", Command::Tree},
-    {"remove", Command::Remove},
-    {"update", Command::Update},
-};
-
-Command to_Command(std::string &str);
