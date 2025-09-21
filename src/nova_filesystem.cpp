@@ -60,9 +60,18 @@ n_folder *open_folder(n_folder *current, std::string folder_name)
   return current;
 }
 
-// void display_tree(n_folder *root)
-// {
-//   n_folder *current = root;
-//   std::string trunk = "|";
-//   std::string branch = "--";
-// }
+
+std::string trunk = "|  "; 
+std::string branch = "|__";
+
+void display_tree(n_folder *root, int depth)
+{
+  for(auto& folder : root->sub_n_folders){
+
+    for(int i = 0; i < depth; i++) std::cout << trunk;
+
+    std::cout << branch << folder.get()->name << endline;
+    display_tree(folder.get(), depth+ 1);
+
+  }
+}

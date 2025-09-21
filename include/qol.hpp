@@ -1,4 +1,4 @@
 #pragma once
 
 constexpr char endline = '\n';
-constexpr char space = ' ';
+constexpr char space = ' '; 

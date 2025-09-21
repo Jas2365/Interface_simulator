@@ -25,4 +25,4 @@ run: $(BIN)
 	./$(BIN)
 
 clean:
-	rm -rf $(OUT_DIR)
+	rm -rf $(OUT_DIR) 

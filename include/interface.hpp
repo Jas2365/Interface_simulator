@@ -34,6 +34,7 @@ struct game_interface
 
 enum class Command
 {
+  Unknown,
   Exit,
   Mkdir,
   Cd,
@@ -42,7 +43,7 @@ enum class Command
   Hello,
   Host,
   Clear,
-  Unknown,
+  Tree,
 };
 
 static const std::unordered_map<std::string, Command> cmd_map{
@@ -55,6 +56,7 @@ static const std::unordered_map<std::string, Command> cmd_map{
     {"hello", Command::Hello},
     {"host", Command::Host},
     {"clear", Command::Clear},
+    {"tree", Command::Tree},
 };
 
 Command to_Command(std::string &str);

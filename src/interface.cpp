@@ -46,6 +46,8 @@ void game_interface::start(char *argv[])
         make_folder(current, argument_0);
       else
         std::cerr << "mkdir: missing operand" << endline;
+        
+      argument_0 = "";
       break;
 
     case Command::Cd:
@@ -60,6 +62,7 @@ void game_interface::start(char *argv[])
       }
       else
         current = root;
+      argument_0 = "";
       break;
 
     case Command::Ls:
@@ -79,6 +82,11 @@ void game_interface::start(char *argv[])
 
     case Command::Clear:
       clear_screen();
+      break;
+
+    case Command::Tree:
+      std::cout << current->name << endline;
+      display_tree(current,0); // depth 0
       break;
     case Command::Unknown:
     default:

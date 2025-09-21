@@ -30,4 +30,4 @@ void make_folder(n_folder *root, std::string folder_name);
 void display_folders_contents(const n_folder *root);
 n_folder *open_folder(n_folder *current, std::string folder_name);
 
-void display_tree(n_folder *root);
+void display_tree(n_folder *root, int depth);
