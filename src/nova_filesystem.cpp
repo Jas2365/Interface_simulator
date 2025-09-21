@@ -98,5 +98,8 @@ void update_folder_name(n_folder *current, std::string folder_name, std::string 
   }
 
   (*it)->name = update_folder_name;
+  // todo
+  // update path
+  // update sub dirs path
   std::cout << "Updated to: " << (*it)->name << endline;
 }
