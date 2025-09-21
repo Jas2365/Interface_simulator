@@ -46,7 +46,7 @@ void game_interface::start(char *argv[])
         make_folder(current, argument_0);
       else
         std::cerr << "mkdir: missing operand" << endline;
-        
+
       argument_0 = "";
       break;
 
@@ -65,6 +65,39 @@ void game_interface::start(char *argv[])
       argument_0 = "";
       break;
 
+    case Command::Remove:
+      iss >> argument_0;
+      if (!argument_0.empty())
+        remove_folder(current, argument_0);
+      else
+        std::cerr << "folder doesnt exist: " << argument_0 << endline;
+
+      argument_0 = "";
+      break;
+    case Command::Update:
+      iss >> argument_0;
+      iss >> argument_1;
+
+      if (!argument_0.empty())
+      {
+        if (!argument_1.empty())
+        {
+          update_folder_name(current, argument_0, argument_1);
+        }
+        else
+        {
+          std::cerr << "Missing operand" << endline;
+        }
+      }
+      else
+      {
+        std::cerr << "folder doesnt exist: " << argument_0 << endline;
+      }
+
+      argument_0 = "";
+      argument_1 = "";
+
+      break;
     case Command::Ls:
       display_folders_contents(current);
       break;
@@ -86,7 +119,7 @@ void game_interface::start(char *argv[])
 
     case Command::Tree:
       std::cout << current->name << endline;
-      display_tree(current,0); // depth 0
+      display_tree(current, 0); // depth 0
       break;
     case Command::Unknown:
     default:

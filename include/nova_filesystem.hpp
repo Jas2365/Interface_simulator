@@ -6,6 +6,7 @@
 #include <string>
 #include <qol.hpp>
 #include <memory>
+#include <algorithm>
 
 //
 // todo: making a new file struct
@@ -29,5 +30,9 @@ struct n_folder
 void make_folder(n_folder *root, std::string folder_name);
 void display_folders_contents(const n_folder *root);
 n_folder *open_folder(n_folder *current, std::string folder_name);
+void remove_folder(n_folder *current, std::string folder_name);
+void update_folder_name(n_folder *current, std::string folder_name, std::string update_folder_name);
 
+const std::string trunk = "|  ";
+const std::string branch = "|__";
 void display_tree(n_folder *root, int depth);

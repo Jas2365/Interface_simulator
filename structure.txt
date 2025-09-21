@@ -18,4 +18,19 @@ Dir fns
 -- open_foler(current, name)
 -- display_folders(current)
 
- 
+=========================
+File system
+
+struct n_folder
+- name
+- parent
+- sub folders 
+- path
+
+functions 
+- make folder ( root, folder_name )
+- display_folders_contents ( root )
+- open_folder ( current, folder_name )
+- remove_folder( current, folder_name )
+- display_tree ( current, depth )
+- update_folder_name( current, folder_name, update_name )
