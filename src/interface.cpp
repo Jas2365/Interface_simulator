@@ -86,7 +86,7 @@ void game_interface::start(char *argv[])
     case Command::Remove:
       iss >> argument_0;
       if (!argument_0.empty())
-        remove_folder(current, argument_0);
+        remove_entry(current, argument_0);
       else
         std::cerr << "folder doesnt exist: " << argument_0 << endline;
 
@@ -96,11 +96,11 @@ void game_interface::start(char *argv[])
       iss >> argument_0;
       iss >> argument_1;
 
-      if (is_folder_exists(current, argument_0))
+      if (!argument_0.empty())
       {
         if (!argument_1.empty())
         {
-          rename_folder_name(current, argument_0, argument_1);
+          rename_entry_name(current, argument_0, argument_1);
         }
         else
         {

@@ -8,33 +8,43 @@
 #include <memory>
 #include <algorithm>
 
-struct n_file
+using Name = std::string;
+using Path = std::string;
+using Content = std::string;
+
+struct n_entry
 {
-  std::string name;
-  std::string extension;
-  std::string path;
-  std::string content;
+
+  Name name;
+  n_entry *parent;
+  Path path;
+
+  virtual bool is_folder() const = 0;
 };
 
-struct n_folder
+struct n_file : n_entry
 {
-  std::string name;
-  n_folder *parent;
-  std::vector<std::unique_ptr<n_folder>> sub_n_folders;
-  std::vector<std::unique_ptr<n_file>> sub_n_files;
-  std::string path;
+  Content content;
+
+  bool is_folder() const { return false; }
+};
+
+struct n_folder : n_entry
+{
+  std::vector<std::unique_ptr<n_entry>> sub_n_entries;
+  bool is_folder() const { return true; }
 };
 
 // folders
-void make_folder(n_folder *current, std::string folder_name);
+void make_folder(n_folder *current, Name &folder_name);
 void display_folders_contents(const n_folder *current);
-n_folder *open_folder(n_folder *current, std::string folder_name);
-void remove_folder(n_folder *current, std::string folder_name);
-void rename_folder_name(n_folder *current, std::string folder_name, std::string rename_folder_name);
+n_folder *open_folder(n_folder *current, Name &folder_name);
+void remove_entry(n_folder *current, Name &folder_name);
+void rename_entry_name(n_folder *current, Name &folder_name, Name &rename_folder_name);
 void update_path_recursively(n_folder *current);
 
-bool is_folder_exists(n_folder *current, std::string &name);
-bool is_file_exists(n_folder *current, std::string &name);
+bool is_entry_exists(n_folder *current, Name &name);
+n_entry *get_entry(n_folder *current, Name &name);
 
 // files
 /**
@@ -42,12 +52,10 @@ bool is_file_exists(n_folder *current, std::string &name);
  * rename file
  * update path of files ??
  * open file ??
- * extension enums ??
  */
-void make_file(n_folder *current, std::string file_name);
+void make_file(n_folder *current, Name &file_name);
 
 // display utils
-
 const std::string trunk = "|  ";
 const std::string branch = "|__";
 void display_tree(n_folder *root, int depth);

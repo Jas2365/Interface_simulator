@@ -10,6 +10,29 @@ int main(int argc, char *argv[])
   root->parent = nullptr;
   root->path = root->name;
 
+  std::vector<std::string> nova = {
+      "bin",
+      "boot",
+      "dev",
+      "etc",
+      "home",
+      "media",
+      "mnt",
+      "opt",
+      "proc",
+      "root",
+      "run",
+      "srv",
+      "sys",
+      "usr",
+      "var",
+  };
+
+  for (auto &folder_name : nova)
+  {
+    make_folder(root, folder_name);
+  }
+
   game_config game_cfg = {"Nova", root};
 
   game_interface game(game_cfg);
@@ -17,4 +40,3 @@ int main(int argc, char *argv[])
 
   return 0;
 }
-
