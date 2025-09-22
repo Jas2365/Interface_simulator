@@ -11,6 +11,31 @@ Command to_Command(std::string &str)
   auto it = cmd_map.find(str);
   return it != cmd_map.end() ? it->second : Command::Unknown;
 }
+void game_interface::__Help__Message__()
+{
+  std::cout << "Help: " << endline << endline
+            << "  -exit    ==>  Exists the program" << endline
+            << "  -hello   ==>  przints hello to console"
+            << "  -restart ==>  restarts the program" << endline
+            << "  -clear   ==>  clears screen" << endline
+            << endline
+            << endline
+            << "  -mkdir   ==>  mkdir <folder_name>" << endline
+            << "  -touch   ==>  touch <file_name>"
+            << endline
+            << endline
+            << "  -cd      ==>  cd <folder_name>" << endline
+            << "  -ls      ==>  displays all folders and files" << endline
+            << "  -remove  ==>  removes an entry" << endline
+            << "  -rename  ==>  rename an entry"
+            << "  -path    ==>  path <entry_name>" << endline
+            << endline
+            << endline
+            << "  -host    ==>  returns hostname" << endline
+            << "  -tree    ==>  represents entries as a tree"
+            << endline
+            << endline;
+}
 
 void game_interface::init(char *argv[])
 {
@@ -48,6 +73,12 @@ void game_interface::start(char *argv[])
       running = false;
       clear_screen();
       break;
+    case Command::Enter:
+      reset_arguments();
+      break;
+    case Command::Help:
+      __Help__Message__();
+      break;
 
     case Command::Mkdir:
       iss >> argument_0;
@@ -56,7 +87,7 @@ void game_interface::start(char *argv[])
       else
         std::cerr << "mkdir: missing operand" << endline;
 
-      argument_0 = "";
+      reset_arguments();
       break;
     case Command::Touch:
       iss >> argument_0;
@@ -65,7 +96,7 @@ void game_interface::start(char *argv[])
       else
         std::cerr << "mkdir: missing operand" << endline;
 
-      argument_0 = "";
+      reset_arguments();
       break;
 
     case Command::Cd:
@@ -80,7 +111,7 @@ void game_interface::start(char *argv[])
       }
       else
         current = root;
-      argument_0 = "";
+      reset_arguments();
       break;
 
     case Command::Remove:
@@ -90,7 +121,7 @@ void game_interface::start(char *argv[])
       else
         std::cerr << "folder doesnt exist: " << argument_0 << endline;
 
-      argument_0 = "";
+      reset_arguments();
       break;
     case Command::Rename:
       iss >> argument_0;
@@ -114,14 +145,23 @@ void game_interface::start(char *argv[])
         std::cerr << "folder doesnt exist: " << argument_0 << endline;
       }
 
-      argument_0 = "";
-      argument_1 = "";
+      reset_arguments();
 
       break;
     case Command::Ls:
       display_folders_contents(current);
       break;
 
+    case Command::Path:
+      iss >> argument_0;
+      if (argument_0.empty())
+      {
+        std::cerr << "path: missing operand" << endline;
+        break;
+      }
+      display_path(current, argument_0);
+      reset_arguments();
+      break;
     case Command::Restart:
       restart(argv);
       break;

@@ -1,33 +1,22 @@
 Game system Terminal
 
-filesystem
+File System
+
+struct entry
+-- name 
+-- path
+-- parent
+-- is_folder()
 
 file struct
--- name
--- contents objects
+-- entry
+-- content (text)
 
-Dir struct
--- name
--- vector of dirs
--- vector of files
--- path
+folder struct
+-- entry
+-- vector of entries
 
-Dir fns
--- make_folder(current, name)
--- delete_foler(current, name)
--- open_foler(current, name)
--- display_folders(current)
-
-=========================
-File system
-
-struct n_folder
-- name
-- parent
-- sub folders 
-- path
-
-functions 
+functions folder
 - make folder ( root, folder_name )
 - display_folders_contents ( root )
 - open_folder ( current, folder_name )

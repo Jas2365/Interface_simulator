@@ -1,7 +1,7 @@
 #include <nova_filesystem.hpp>
 
 // true => exists
-bool is_entry_exists(n_folder *current, std::string &name)
+bool is_entry_exists(n_folder *current, Name &name)
 {
   if (!current)
   {
@@ -14,7 +14,7 @@ bool is_entry_exists(n_folder *current, std::string &name)
   }
   return false;
 }
-n_entry *get_entry(n_folder *current, std::string &entry_name)
+n_entry *get_entry(n_folder *current, Name &entry_name)
 {
   /**
    * to do
@@ -28,7 +28,7 @@ n_entry *get_entry(n_folder *current, std::string &entry_name)
                                             : nullptr;
 }
 
-void make_folder(n_folder *current, std::string folder_name)
+void make_folder(n_folder *current, Name &folder_name)
 {
   if (is_entry_exists(current, folder_name))
   {
@@ -65,7 +65,7 @@ void display_folders_contents(const n_folder *current)
   }
 }
 
-n_folder *open_folder(n_folder *current, std::string entry_name)
+n_folder *open_folder(n_folder *current, Name &entry_name)
 {
 
   if (entry_name == "..")
@@ -94,9 +94,9 @@ n_folder *open_folder(n_folder *current, std::string entry_name)
   return (n_folder *)entry;
 }
 
-void display_tree(n_folder *root, int depth)
+void display_tree(n_folder *current, int depth)
 {
-  for (auto &entry : root->sub_n_entries)
+  for (auto &entry : current->sub_n_entries)
   {
 
     for (int i = 0; i < depth; i++)
@@ -114,7 +114,7 @@ void display_tree(n_folder *root, int depth)
   }
 }
 
-void remove_entry(n_folder *current, std::string folder_name)
+void remove_entry(n_folder *current, Name &folder_name)
 {
   current->sub_n_entries.erase(
       std::remove_if(current->sub_n_entries.begin(), current->sub_n_entries.end(), [folder_name](auto &f)
@@ -122,7 +122,7 @@ void remove_entry(n_folder *current, std::string folder_name)
       current->sub_n_entries.end());
 }
 
-void rename_entry_name(n_folder *current, std::string entry_name, std::string rename_entry_name)
+void rename_entry_name(n_folder *current, Name &entry_name, Name &rename_entry_name)
 {
   if (!is_entry_exists(current, entry_name))
   {
@@ -138,23 +138,14 @@ void rename_entry_name(n_folder *current, std::string entry_name, std::string re
 
   auto it = get_entry(current, entry_name);
 
-  std::cout << "Checkpoint " << endline;
-
-  //
-  // fix why the parent path isnt useable
-  //
-
-  it->name = rename_entry_name;
-  // it->path = it->parent->path + "/" + it->name;
-  std::cout << "parent Path: " << it->parent->path << endline;
-  std::cout << "entry name: " << it->name << endline;
-  it->path = rename_entry_name;
-
   if (it->is_folder())
     update_path_recursively((n_folder *)it);
-
-  std::cout << "Checkpoint " << endline;
-  std::cout << "Renamed to: " << it->name << endline;
+  else
+  {
+    n_file *file = (n_file *)it;
+    file->name = rename_entry_name;
+    file->path = file->parent->path + "/" + file->name;
+  }
 }
 
 void update_path_recursively(n_folder *current)
@@ -178,8 +169,8 @@ void update_path_recursively(n_folder *current)
     }
   }
 }
-// true => exists
-void make_file(n_folder *current, std::string file_name)
+
+void make_file(n_folder *current, Name &file_name)
 {
   if (is_entry_exists(current, file_name))
   {
@@ -190,7 +181,24 @@ void make_file(n_folder *current, std::string file_name)
   std::unique_ptr<n_file> n_temp(new n_file);
 
   n_temp->name = file_name;
+  n_temp->parent = current;
   n_temp->path = current->path + "/" + file_name;
 
   current->sub_n_entries.push_back(std::move(n_temp));
+}
+
+void display_path(n_folder *current, Name &entry_name)
+{
+
+  n_entry *entry = get_entry(current, entry_name);
+  if (entry)
+  {
+
+    std::cout << "Name: " << entry->name << endline
+              << "Path: " << entry->path << endline;
+  }
+  else
+  {
+    std::cerr << "Entry \'" << entry_name << "\' doesnt exist" << endline;
+  }
 }

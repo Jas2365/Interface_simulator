@@ -6,6 +6,7 @@
 enum class Command
 {
   Unknown,
+  Enter,
   Help,
   Exit,
   Mkdir,
@@ -19,10 +20,12 @@ enum class Command
   Remove,
   Rename,
   Touch,
+  Path,
 };
 
 static const std::unordered_map<std::string, Command> cmd_map{
     {"unknown", Command::Unknown},
+    {"", Command::Enter},
     {"help", Command::Help},
     {"exit", Command::Exit},
     {"mkdir", Command::Mkdir},
@@ -36,6 +39,7 @@ static const std::unordered_map<std::string, Command> cmd_map{
     {"remove", Command::Remove},
     {"rename", Command::Rename},
     {"touch", Command::Touch},
+    {"path", Command::Path},
 };
 
 Command to_Command(std::string &str);
@@ -68,4 +72,11 @@ struct game_interface
 
   void primary_prompt();
   inline void clear_screen() { system("clear"); }
+  inline void reset_arguments()
+  {
+    argument_0 = "";
+    argument_1 = "";
+  }
+
+  void __Help__Message__();
 };

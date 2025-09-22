@@ -58,4 +58,5 @@ void make_file(n_folder *current, Name &file_name);
 // display utils
 const std::string trunk = "|  ";
 const std::string branch = "|__";
-void display_tree(n_folder *root, int depth);
+void display_tree(n_folder *current, int depth);
+void display_path(n_folder *current, Name &entry_name);
