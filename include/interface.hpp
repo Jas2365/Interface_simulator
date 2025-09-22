@@ -71,7 +71,13 @@ struct game_interface
   void start(char *argv[]);
 
   void primary_prompt();
-  inline void clear_screen() { system("clear"); }
+  inline void clear_screen() {
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
+}
   inline void reset_arguments()
   {
     argument_0 = "";
